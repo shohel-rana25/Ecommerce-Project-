@@ -15,6 +15,12 @@ router.register(r'payments', PaymentViewSet, basename='payment')
 router.register(r'reviews', ReviewViewSet)
 
 
+from .views import SignupView, LoginView, LogoutView
+
 urlpatterns = [
     path('', include(router.urls)),
+    path('signup/', SignupView.as_view(), name='signup'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+
 ]

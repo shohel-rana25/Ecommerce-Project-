@@ -4,7 +4,36 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from .models import* 
-from .serializers import CartItemModelSerializer, ProductModelSerializer, OrderItemModelSerializer, OrderModelSerializer, CartItemModelSerializer, ReviewModelSerializer,CategoryModelSerializer
+from .serializers import UserSerializer, CartItemModelSerializer, ProductModelSerializer, OrderItemModelSerializer, OrderModelSerializer, CartItemModelSerializer, ReviewModelSerializer,CategoryModelSerializer
+
+
+from rest_framework import generics, permissions
+from django.contrib.auth.models import User
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+# views.py
+class SignupView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.AllowAny]
+
+class LoginView(TokenObtainPairView):
+    permission_classes = [permissions.AllowAny]
+
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"detail": "Logout successful"})
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
+
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
